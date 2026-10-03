@@ -11,6 +11,7 @@ import "./css/Lyrics/Mixed.css";
 import "./css/Loaders/LoaderContainer.css";
 import "./css/Loaders/LyricsSkeleton.css";
 import "./css/font-pack/font-pack.css";
+import "./css/CopyLyrics.css";
 
 import ApplyDynamicBackground, {
   GetStaticBackground,

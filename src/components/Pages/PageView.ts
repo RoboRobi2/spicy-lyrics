@@ -29,6 +29,7 @@ import {
   $lineHoverBackground,
   $lyricsContainerExists,
   $minimalLyricsMode,
+  $showCopyLyricsButton,
   $showVolumeSlider,
   $simpleLyricsMode,
   $skipSpicyFont,
@@ -67,6 +68,8 @@ import Logger from "../../utils/Logger.ts";
 import { setStockPlaybarPage } from "../../utils/themeMatcher.ts";
 import { ApplyExperimentClasses, onExperimentChange } from "../../utils/experiments.ts";
 import { triggerRemeasureLV } from "../../utils/Lyrics/LyricsVirtualizer.ts";
+import { FormatAllLyrics, HasCopyLines, WriteToClipboard } from "../../utils/Lyrics/CopyLyrics.ts";
+import { ShowCopyFeedback } from "../Utils/CopyLyricsMenu.ts";
 
 const pageLogger = new Logger("Page View");
 const controlsLogger = new Logger("View Controls");
@@ -85,6 +88,7 @@ export const Tooltips: {
   CinemaView: TippyInstance | null;
   NowBarSideToggle: TippyInstance | null;
   LyricsManager: TippyInstance | null;
+  CopyLyrics: TippyInstance | null;
   Settings: TippyInstance | null;
 } = {
   Close: null,
@@ -95,6 +99,7 @@ export const Tooltips: {
   CinemaView: null,
   NowBarSideToggle: null,
   LyricsManager: null,
+  CopyLyrics: null,
   Settings: null,
 };
 
@@ -502,6 +507,7 @@ function AppendViewControls(ReAppend: boolean = false) {
   const isNoLyrics =
     $currentLyricsData.get() === `NO_LYRICS:${SpotifyPlayer.GetUri()}`;
   const isTTMLMakerMode = $ttmlMakerMode.get();
+  const showCopyButton = $showCopyLyricsButton.get() && !isNoLyrics;
   elem.innerHTML = `
         ${
           Fullscreen.IsOpen || Fullscreen.CinemaViewOpen
@@ -547,6 +553,11 @@ function AppendViewControls(ReAppend: boolean = false) {
         ${
           isTTMLMakerMode
             ? `<button id="LyricsManager" class="ViewControl">${Icons.LyricsManager}</button>`
+            : ""
+        }
+        ${
+          showCopyButton
+            ? `<button id="CopyLyrics" class="ViewControl"><span class="CopyIcon">${Icons.CopyLyrics}</span><span class="CopiedIcon">${Icons.Check}</span></button>`
             : ""
         }
         ${IsPIP ? "" : `<button id="SettingsToggle" class="ViewControl">${Icons.Settings}</button>`}
@@ -787,6 +798,31 @@ function AppendViewControls(ReAppend: boolean = false) {
       }
     }
 
+    const copyLyricsButton = elem.querySelector<HTMLElement>("#CopyLyrics");
+    if (copyLyricsButton) {
+      try {
+        if (!isPip) {
+          Tooltips.CopyLyrics = createTooltip(copyLyricsButton, {
+            ...Spicetify.TippyProps,
+            content: "Copy Lyrics",
+          });
+        }
+        let feedbackTimeout: ReturnType<typeof setTimeout> | undefined;
+        copyLyricsButton.addEventListener("click", async () => {
+          if (!HasCopyLines()) return;
+          const win = copyLyricsButton.ownerDocument.defaultView ?? window;
+          const ok = await WriteToClipboard(FormatAllLyrics(), win);
+          ShowCopyFeedback(copyLyricsButton, ok);
+          clearTimeout(feedbackTimeout);
+          feedbackTimeout = setTimeout(() => {
+            copyLyricsButton.classList.remove("Copied", "CopyFailed");
+          }, 1400);
+        });
+      } catch (err) {
+        controlsLogger.warn("Failed to setup Copy Lyrics tooltip", err);
+      }
+    }
+
     const lyricsManagerButton = elem.querySelector("#LyricsManager");
     if (lyricsManagerButton && isTTMLMakerMode) {
       try {
@@ -863,5 +899,10 @@ $ttmlMakerMode.listen((v) => {
   if (!PageContainer) return;
   AppendViewControls(true);
 })
+
+$showCopyLyricsButton.listen(() => {
+  if (!PageContainer) return;
+  AppendViewControls(true);
+});
 
 export default PageView;

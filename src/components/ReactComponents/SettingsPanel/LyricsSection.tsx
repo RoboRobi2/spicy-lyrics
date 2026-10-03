@@ -1,15 +1,23 @@
 import { useStore } from "@nanostores/react";
 import React from "react";
 import {
+  $copyLyricsFormat,
   $lineHoverBackground,
   $minimalLyricsMode,
   $simpleLyricsMode,
-  $simpleLyricsModeRenderingType
+  $simpleLyricsModeRenderingType,
+  $showCopyLyricsButton
 } from "../../../utils/stores.ts";
 import { matches, Row, Select, SectionTitle, Toggle } from "./components.tsx";
 
 const SECTION_NAME = "Lyrics Display";
 const renderingTypeOptions = ["calculate", "animate"];
+const copyFormatOptions = ["plain", "lrc", "elrc"];
+const copyFormatLabels = ["Plain Text", "LRC", "Enhanced LRC"];
+const COPY_BUTTON_DESCRIPTION =
+  "Show a button in the view controls that copies the lyrics. Right-clicking a line works either way.";
+const COPY_FORMAT_DESCRIPTION =
+  "Applies to copying a line and the whole song. LRC adds timestamps per line, Enhanced LRC per word. Handy for making TTMLs.";
 
 interface Props {
   query: string;
@@ -21,6 +29,8 @@ export default function LyricsSection({ query, sectionFilter }: Props) {
   const simpleLyricsModeRenderingType = useStore($simpleLyricsModeRenderingType);
   const minimalLyricsMode = useStore($minimalLyricsMode);
   const lineHoverBackground = useStore($lineHoverBackground);
+  const showCopyLyricsButton = useStore($showCopyLyricsButton);
+  const copyLyricsFormat = useStore($copyLyricsFormat);
 
   if (sectionFilter !== "All" && sectionFilter !== SECTION_NAME) return null;
 
@@ -28,8 +38,10 @@ export default function LyricsSection({ query, sectionFilter }: Props) {
   const r2 = matches(query, "Simple Mode: Text Animation Style", "How lyrics text transitions are rendered in Simple Lyrics Mode.");
   const r3 = matches(query, "Minimal Lyrics Mode", "Hides sung lyrics lines in Fullscreen and Cinema Mode");
   const r4 = matches(query, "Line Hover Background", "Shows a highlight box behind a lyrics line when you hover over it");
+  const r5 = matches(query, "Copy Lyrics Button", COPY_BUTTON_DESCRIPTION);
+  const r6 = matches(query, "Copy Lyrics Format", COPY_FORMAT_DESCRIPTION);
 
-  if (!r1 && !r2 && !r3 && !r4) return null;
+  if (!r1 && !r2 && !r3 && !r4 && !r5 && !r6) return null;
 
   return (
     <>
@@ -72,6 +84,23 @@ export default function LyricsSection({ query, sectionFilter }: Props) {
           description="Shows a highlight box behind a lyrics line when you hover over it"
         >
           <Toggle checked={lineHoverBackground} onChange={(v) => $lineHoverBackground.set(v)} />
+        </Row>
+      )}
+
+      {r5 && (
+        <Row label="Copy Lyrics Button" description={COPY_BUTTON_DESCRIPTION}>
+          <Toggle checked={showCopyLyricsButton} onChange={(v) => $showCopyLyricsButton.set(v)} />
+        </Row>
+      )}
+
+      {r6 && (
+        <Row label="Copy Lyrics Format" description={COPY_FORMAT_DESCRIPTION}>
+          <Select
+            value={copyLyricsFormat}
+            options={copyFormatOptions}
+            labels={copyFormatLabels}
+            onChange={(v) => $copyLyricsFormat.set(v)}
+          />
         </Row>
       )}
  

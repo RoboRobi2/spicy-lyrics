@@ -6,6 +6,11 @@ import { Lyrics } from "./Animator/Main.ts";
 import { PageContainer } from "../../components/Pages/PageView.ts";
 import { Maid } from "../../modules/Maid.ts";
 import { onAnimationFrame } from "../AnimationFrameLoop.ts";
+import { ResetCopyLines } from "./CopyLyrics.ts";
+import {
+  CloseCopyMenu,
+  CopyLyricsContextMenuListener,
+} from "../../components/Utils/CopyLyricsMenu.ts";
 
 export const ScrollingIntervalTime = Infinity;
 
@@ -152,6 +157,7 @@ export function SetWordArrayInCurentLine_LINE_SYNCED() {
 }
 
 export function ClearLyricsContentArrays() {
+  ResetCopyLines();
   LyricsObject.Types.Syllable.Lines = [];
   LyricsObject.Types.Line.Lines = [];
   LyricsObject.Types.Static.Lines = [];
@@ -313,10 +319,13 @@ export function addLinesEvListener() {
 
   // Add event listener and store a reference to the handler function
   el.addEventListener("click", LinesEvListener);
+  el.addEventListener("contextmenu", CopyLyricsContextMenuListener);
 
   // Store a cleanup function in the Maid instead of the event listener result
   LinesEvListenerMaid.Give(() => {
     el.removeEventListener("click", LinesEvListener);
+    el.removeEventListener("contextmenu", CopyLyricsContextMenuListener);
+    CloseCopyMenu();
   });
 }
 
