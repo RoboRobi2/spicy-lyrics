@@ -28,6 +28,7 @@ import { ApplyLyricsCredits } from "../Credits/ApplyLyricsCredits.ts";
 import { EmitApply, EmitNotApplyed } from "../OnApply.ts";
 import { ApplyLyricsProvider } from "../Credits/ApplyProvider.ts";
 import { RemoveEmptyLyricsLines } from "../../EmptyLines.ts";
+import { AddCopyLine, DisplayLineText } from "../../CopyLyrics.ts";
 
 // Define the data structure for lyrics
 interface LyricsLineData {
@@ -209,6 +210,11 @@ export function ApplyLineLyrics(data: LyricsData, UseRomanized: boolean = false)
       StartTime: ConvertTime(line.StartTime),
       EndTime: ConvertTime(lineEndTime),
       TotalTime: ConvertTime(lineEndTime) - ConvertTime(line.StartTime),
+    });
+    AddCopyLine(lineElem, {
+      Text: DisplayLineText(line, UseRomanized),
+      StartTime: line.StartTime,
+      EndTime: line.EndTime,
     });
 
     if (line.OppositeAligned) {

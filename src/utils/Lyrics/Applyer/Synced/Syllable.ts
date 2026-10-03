@@ -31,6 +31,7 @@ import Emphasize from "../Utils/Emphasize.ts";
 import { IsLetterCapable } from "../Utils/IsLetterCapable.ts";
 import { ApplyLyricsProvider } from "../Credits/ApplyProvider.ts";
 import { HasRenderableText, IsEmptySyllableGroup, RemoveEmptyLyricsLines } from "../../EmptyLines.ts";
+import { AddCopyLine, SyllableCopyLine } from "../../CopyLyrics.ts";
 
 // Define the data structure for syllable lyrics
 interface SyllableData {
@@ -224,6 +225,7 @@ export function ApplySyllableLyrics(data: LyricsData, UseRomanized: boolean = fa
       EndTime: ConvertTime(lineEndTime),
       TotalTime: ConvertTime(lineEndTime) - ConvertTime(line.Lead.StartTime),
     });
+    AddCopyLine(lineElem, SyllableCopyLine(line.Lead, UseRomanized));
 
     SetWordArrayInCurentLine();
 
@@ -335,6 +337,7 @@ export function ApplySyllableLyrics(data: LyricsData, UseRomanized: boolean = fa
           TotalTime: ConvertTime(bg.EndTime) - ConvertTime(bg.StartTime),
           BGLine: true,
         });
+        AddCopyLine(lineE, SyllableCopyLine(bg, UseRomanized, true));
         SetWordArrayInCurentLine();
 
         if (line.OppositeAligned) {

@@ -114,6 +114,11 @@ export const $smoothScrolling = persistAtom<boolean>("smoothScrolling", false);
 // slider value only applies once the cap is turned on.
 export const $animationFpsCapEnabled = persistAtom<boolean>("animationFpsCapEnabled", false);
 export const $animationFpsCap = persistAtom<number>("animationFpsCap", 60);
+// Copy button in the view controls, off by default to keep the controls lean.
+// Right-clicking a line offers copying either way.
+export const $showCopyLyricsButton = persistAtom<boolean>("showCopyLyricsButton", false);
+// What "copy all" produces: "plain" | "lrc" (line timestamps) | "elrc" (word timestamps).
+export const $copyLyricsFormat = persistAtom<string>("copyLyricsFormat", "plain");
 
 // Version atom — NOT persisted, set once at startup
 export const $spicyLyricsVersion = atom<string>(

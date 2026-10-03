@@ -24,6 +24,7 @@ import { ApplyLyricsCredits } from "./Credits/ApplyLyricsCredits.ts";
 import { EmitApply, EmitNotApplyed } from "./OnApply.ts";
 import { ApplyLyricsProvider } from "./Credits/ApplyProvider.ts";
 import { RemoveEmptyLyricsLines } from "../EmptyLines.ts";
+import { AddCopyLine, DisplayLineText } from "../CopyLyrics.ts";
 
 /**
  * Interface for static lyrics data
@@ -100,6 +101,7 @@ export function ApplyStaticLyrics(data: StaticLyricsData, UseRomanized: boolean 
     };
 
     LyricsObject.Types.Static.Lines.push(staticLine);
+    AddCopyLine(lineElem, { Text: DisplayLineText(line, UseRomanized) });
     lineElements.push(lineElem);
   });
 
