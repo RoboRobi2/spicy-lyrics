@@ -9,6 +9,7 @@ import { Spring } from "../../modules/Spring.ts";
 import Logger from "../Logger.ts";
 import { $smoothScrolling } from "../stores.ts";
 import { cancelCappedFrame, requestCappedFrame } from "../AnimationFrameLoop.ts";
+import { isExperimentEnabled } from "../experiments.ts";
 
 // Gap scale factors relative to 1cqw (containerWidth / 100).
 // Gap is baked into each wrapper's padding-bottom so items can have
@@ -32,6 +33,15 @@ const virtualizerLogger = new Logger("Lyrics Virtualizer");
 // what makes back-to-back line changes read as one continuous glide.
 const SMOOTH_SCROLL_FREQUENCY = 1;
 const SMOOTH_SCROLL_DAMPING = 1;
+// The "bouncySmoothScroll" experiment: reaches 95% of the way in ~0.38s instead
+// of ~0.76s, and when moving down overshoots by ~3% (about 2px on a typical
+// line) before settling, ~0.85s in all. Moving up stays critically damped, so a
+// seek back never bounces, and so do long jumps: the overshoot grows with the
+// distance, and on a seek far ahead it would be tens of pixels.
+const SMOOTH_SCROLL_BOUNCE_FREQUENCY = 1.3;
+const SMOOTH_SCROLL_BOUNCE_DAMPING = 0.75;
+// Longest glide that still bounces, as a share of the viewport height.
+const SMOOTH_SCROLL_BOUNCE_MAX_DISTANCE = 1 / 3;
 // The glide is done once it is this close (px) to the goal and moving slower than
 // this per frame. Sub-pixel rendering makes the final snap invisible.
 const SMOOTH_SCROLL_SETTLE_PX = 0.25;
@@ -161,6 +171,9 @@ class LyricsVirtualizer {
     totalSize: number;
   } | null = null;
   private _smoothReconciles = 0;
+  // Damping is chosen on the first frame after a retarget, once the goal is
+  // known, so the bounce only applies to downward glides.
+  private _smoothPickDamping = false;
 
   // performance.now() until which row glides stay off. See LAYOUT_GLIDE_BLOCK_MS.
   private _layoutGlideBlockedUntil = 0;
@@ -913,6 +926,12 @@ class LyricsVirtualizer {
 
     this._smoothGeometry = this._readSmoothGeometry(v, scrollEl);
     this._smoothReconciles = 0;
+    this._smoothSpring.SetFrequency(
+      isExperimentEnabled("bouncySmoothScroll")
+        ? SMOOTH_SCROLL_BOUNCE_FREQUENCY
+        : SMOOTH_SCROLL_FREQUENCY
+    );
+    this._smoothPickDamping = true;
 
     this._smoothTarget = { index, align, padding };
     // We are the only scrollTop writer until the glide settles — see _shouldAdjustScroll.
@@ -993,6 +1012,18 @@ class LyricsVirtualizer {
     );
 
     spring.SetGoal(goal);
+    if (this._smoothPickDamping) {
+      this._smoothPickDamping = false;
+      const from = this._smoothLastPosition ?? scrollEl.scrollTop + this._smoothFraction;
+      const distance = goal - from;
+      spring.SetDampingRatio(
+        isExperimentEnabled("bouncySmoothScroll") &&
+          distance > 0 &&
+          distance <= geometry.viewportHeight * SMOOTH_SCROLL_BOUNCE_MAX_DISTANCE
+          ? SMOOTH_SCROLL_BOUNCE_DAMPING
+          : SMOOTH_SCROLL_DAMPING
+      );
+    }
     // Step the spring in slices of at most SMOOTH_SCROLL_MAX_STEP so a low frame
     // rate cap (15 fps is ~67 ms a frame) keeps the glide's wall-clock timing,
     // while a real stall (hidden window, long task) still can't jump it forward.

@@ -64,6 +64,13 @@ export const EXPERIMENTS = [
     default: true,
     pageClass: "Exp_LyricsSkeleton",
   },
+  {
+    id: "bouncySmoothScroll",
+    label: "Bouncy Smooth Scrolling",
+    description:
+      "With Smooth Scrolling on, the glide to the next line is about twice as quick and overshoots it slightly before settling when moving down. Disable for the original slower glide without a bounce.",
+    default: true,
+  },
 ] as const satisfies readonly Experiment[];
 
 /** A registry entry, narrowed to its literal `id` — what the UI iterates over. */
@@ -94,9 +101,11 @@ export function setExperiment(id: ExperimentId, value: boolean): void {
 
 /** Sync every experiment's `pageClass` onto the page root. Safe to call anytime. */
 export function ApplyExperimentClasses(el: HTMLElement): void {
-  for (const exp of EXPERIMENTS) {
+  // Widened to Experiment: `pageClass` is optional, and the literal union only
+  // has the key while every entry happens to set it.
+  for (const exp of EXPERIMENTS as readonly Experiment[]) {
     if (!exp.pageClass) continue;
-    el.classList.toggle(exp.pageClass, isExperimentEnabled(exp.id));
+    el.classList.toggle(exp.pageClass, isExperimentEnabled(exp.id as ExperimentId));
   }
 }
 
