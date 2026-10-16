@@ -158,6 +158,11 @@ export const Icons = {
     `<rect x="3" y="5" width="9" height="9" rx="2"/><path d="M4.5 18.5h6"/><path d="M15.5 7.5h5"/><path d="M15.5 11.5h5"/><path d="M15.5 15.5h3"/>`
   ),
   PiPMode: `<svg data-encore-id="icon" role="img" aria-hidden="true" class="e-91000-icon e-91000-baseline" viewBox="0 0 16 16" style="--encore-icon-height: var(--encore-graphic-size-decorative-smaller); --encore-icon-width: var(--encore-graphic-size-decorative-smaller);"><path d="M16 2.45c0-.8-.65-1.45-1.45-1.45H1.45C.65 1 0 1.65 0 2.45v11.1C0 14.35.65 15 1.45 15h5.557v-1.5H1.5v-11h13V7H16z"></path><path d="M15.25 9.007a.75.75 0 0 1 .75.75v4.493a.75.75 0 0 1-.75.75H9.325a.75.75 0 0 1-.75-.75V9.757a.75.75 0 0 1 .75-.75z"></path></svg>`,
+  // Two stacked sheets, the front one with lyric lines: copy the lyrics.
+  CopyLyrics: Line(
+    `<rect x="8" y="8" width="13" height="13" rx="2.5"/><path d="M4.5 16A1.5 1.5 0 0 1 3 14.5v-9A2.5 2.5 0 0 1 5.5 3h9A1.5 1.5 0 0 1 16 4.5"/><path d="M11.5 12.5h6"/><path d="M11.5 16.5h4"/>`
+  ),
+  Check: Line(`<path d="M20 6 9 17l-5-5"/>`),
   // Eight teeth, so the 45° hover turn in default.css lands on an identical gear.
   Settings: Line(
     `<g class="SL_IconPart SL_IconGear"><path d="M10.07 5.69L10.48 3.38A8.75 8.75 0 0 1 13.52 3.38L13.93 5.69A6.6 6.6 0 0 1 15.1 6.17L17.02 4.83A8.75 8.75 0 0 1 19.17 6.98L17.83 8.9A6.6 6.6 0 0 1 18.31 10.07L20.62 10.48A8.75 8.75 0 0 1 20.62 13.52L18.31 13.93A6.6 6.6 0 0 1 17.83 15.1L19.17 17.02A8.75 8.75 0 0 1 17.02 19.17L15.1 17.83A6.6 6.6 0 0 1 13.93 18.31L13.52 20.62A8.75 8.75 0 0 1 10.48 20.62L10.07 18.31A6.6 6.6 0 0 1 8.9 17.83L6.98 19.17A8.75 8.75 0 0 1 4.83 17.02L6.17 15.1A6.6 6.6 0 0 1 5.69 13.93L3.38 13.52A8.75 8.75 0 0 1 3.38 10.48L5.69 10.07A6.6 6.6 0 0 1 6.17 8.9L4.83 6.98A8.75 8.75 0 0 1 6.98 4.83L8.9 6.17A6.6 6.6 0 0 1 10.07 5.69Z"/><circle cx="12" cy="12" r="2.75"/></g>`
