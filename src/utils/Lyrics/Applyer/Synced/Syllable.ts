@@ -38,6 +38,7 @@ import { IsLetterCapable, MinLetterCapableDuration } from "../Utils/IsLetterCapa
 import { JoinSplitWords } from "../Utils/JoinSplitWords.ts";
 import { SplitLetters } from "../Utils/SplitLetters.ts";
 import { HasRenderableText, IsEmptySyllableGroup, RemoveEmptyLyricsLines } from "../../EmptyLines.ts";
+import { AddCopyLine, SyllableCopyLine } from "../../CopyLyrics.ts";
 import Logger from "../../../Logger.ts";
 
 const syllableLogger = new Logger("Syllable Lyrics");
@@ -348,6 +349,7 @@ export function ApplySyllableLyrics(data: LyricsData, UseRomanized: boolean = fa
       TotalTime: ConvertTime(lineEndTime) - ConvertTime(line.Lead.StartTime),
       LeadEndTime: ConvertTime(line.Lead.EndTime),
     });
+    AddCopyLine(lineElem, SyllableCopyLine(line.Lead, ShowRomanized));
 
     SetWordArrayInCurentLine();
 
@@ -466,6 +468,7 @@ export function ApplySyllableLyrics(data: LyricsData, UseRomanized: boolean = fa
           TotalTime: ConvertTime(bg.EndTime) - ConvertTime(bg.StartTime),
           BGLine: true,
         });
+        AddCopyLine(lineE, SyllableCopyLine(bg, ShowRomanized, true));
         SetWordArrayInCurentLine();
 
         if (line.OppositeAligned) {

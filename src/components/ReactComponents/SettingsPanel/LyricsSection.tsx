@@ -1,5 +1,6 @@
 import { useStore } from "@nanostores/react";
 import {
+  $copyLyricsFormat,
   $creditsFollowLastLine,
   $duetLinePadding,
   $lineHoverBackground,
@@ -8,6 +9,7 @@ import {
   $pinnedCredits,
   $rendererVisualStyle,
   $romanizationDisplay,
+  $showCopyLyricsButton,
   $syllableMerge,
   $syllablePace,
   RENDERER_VISUAL_STYLES,
@@ -186,6 +188,42 @@ const groups: GroupDef[] = [
             options={["off", "noWriters", "full"]}
             labels={["Off", "No Writers", "Full"]}
             onChange={(v) => $pinnedCredits.set(v as PinnedCredits)}
+          />
+        ),
+      },
+    ],
+  },
+  {
+    title: "Copying",
+    settings: [
+      {
+        id: "showCopyLyricsButton",
+        label: "Copy Lyrics Button",
+        description:
+          "Show a button in the view controls that copies the lyrics. Right-clicking a line works either way.",
+        keywords: "copy clipboard lrc",
+        Control: ({ label }) => (
+          <Toggle
+            label={label}
+            checked={useStore($showCopyLyricsButton)}
+            onChange={(v) => $showCopyLyricsButton.set(v)}
+          />
+        ),
+      },
+      {
+        id: "copyLyricsFormat",
+        label: "Copy Lyrics Format",
+        description:
+          "Applies to copying a line and the whole song. LRC adds timestamps per line, Enhanced LRC per word. Handy for making TTMLs.",
+        keywords: "copy clipboard lrc ttml timestamps",
+        Control: ({ label, disabled }) => (
+          <Select
+            label={label}
+            value={useStore($copyLyricsFormat)}
+            options={["plain", "lrc", "elrc"]}
+            labels={["Plain Text", "LRC", "Enhanced LRC"]}
+            onChange={(v) => $copyLyricsFormat.set(v)}
+            disabled={disabled}
           />
         ),
       },
