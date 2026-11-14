@@ -240,6 +240,14 @@ export const EXPERIMENTS = [
     default: true,
     pageClass: "Exp_GroupedViewControls",
   },
+  {
+    id: "bouncySmoothScroll",
+    category: "lyrics",
+    label: "Bouncy Smooth Scrolling",
+    description:
+      "With Smooth Scrolling on, the glide to the next line is about twice as quick and overshoots it slightly before settling when moving down. Disable for the original slower glide without a bounce.",
+    default: true,
+  },
 ] as const satisfies readonly Experiment[];
 
 /** A registry entry, narrowed to its literal `id`. */
