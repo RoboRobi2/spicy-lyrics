@@ -27,6 +27,7 @@ import { initLyricsVirtualizer } from "../../LyricsVirtualizer.ts";
 import { ApplySongCredits, MarkLastLineSide } from "../Credits/ApplyLyricsCredits.ts";
 import { EmitApply, EmitNotApplyed } from "../OnApply.ts";
 import { RemoveEmptyLyricsLines } from "../../EmptyLines.ts";
+import { AddCopyLine, DisplayLineText } from "../../CopyLyrics.ts";
 import Logger from "../../../Logger.ts";
 
 const lineLogger = new Logger("Line Lyrics");
@@ -218,6 +219,11 @@ export function ApplyLineLyrics(data: LyricsData, UseRomanized: boolean = false)
       EndTime: ConvertTime(lineEndTime),
       TotalTime: ConvertTime(lineEndTime) - ConvertTime(line.StartTime),
       LeadEndTime: ConvertTime(line.EndTime),
+    });
+    AddCopyLine(lineElem, {
+      Text: DisplayLineText(line, ShowRomanized),
+      StartTime: line.StartTime,
+      EndTime: line.EndTime,
     });
 
     if (line.OppositeAligned) {

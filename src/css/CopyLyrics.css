@@ -1,0 +1,118 @@
+/* Copy Lyrics — the view control button and the line context menu.
+   The menu follows the settings panel's filter menu (hairline edge, soft
+   cast, same items), but on the elevated surface instead of clear glass: it
+   opens over the lyrics themselves, and bright lyric text behind a 12% tint
+   makes the entries hard to read. It is appended to the document body,
+   outside #SpicyLyricsPage, so it only uses the global tokens. */
+
+#SpicyLyricsPage .ViewControls .ViewControl#CopyLyrics .CopyIcon,
+#SpicyLyricsPage .ViewControls .ViewControl#CopyLyrics.Copied .CopiedIcon {
+  display: contents;
+}
+
+#SpicyLyricsPage .ViewControls .ViewControl#CopyLyrics .CopiedIcon,
+#SpicyLyricsPage .ViewControls .ViewControl#CopyLyrics.Copied .CopyIcon {
+  display: none;
+}
+
+#SpicyLyricsPage .ViewControls .ViewControl#CopyLyrics.Copied {
+  color: var(--color-status-success);
+}
+
+#SpicyLyricsPage .ViewControls .ViewControl#CopyLyrics.CopyFailed {
+  color: var(--color-status-danger);
+}
+
+.SpicyLyricsCopyMenu {
+  position: fixed;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+  padding: var(--space-1);
+  background: var(--color-bg-elevated);
+  -webkit-backdrop-filter: var(--material-regular-blur);
+  backdrop-filter: var(--material-regular-blur);
+  box-shadow:
+    var(--liquid-cast-soft),
+    inset 0 0 0 1px var(--hairline);
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  animation: SpicyLyricsCopyMenuIn 0.18s cubic-bezier(0.23, 1, 0.32, 1);
+  user-select: none;
+}
+
+@keyframes SpicyLyricsCopyMenuIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.SpicyLyricsCopyMenu__Item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 7px 10px;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  color: var(--color-text-secondary);
+  font-family: inherit;
+  font-size: var(--text-caption-size) !important;
+  font-weight: var(--w-regular);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard);
+}
+
+.SpicyLyricsCopyMenu__Item:hover,
+.SpicyLyricsCopyMenu__Item:focus-visible {
+  background: var(--accent-tint-bg);
+  color: var(--color-text-primary);
+  outline: none;
+}
+
+.SpicyLyricsCopyMenu__Icon {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.SpicyLyricsCopyMenu__Icon svg {
+  width: 15px;
+  height: 15px;
+}
+
+.SpicyLyricsCopyMenu__Icon--Done,
+.SpicyLyricsCopyMenu__Item.Copied .SpicyLyricsCopyMenu__Icon--Copy {
+  display: none;
+}
+
+.SpicyLyricsCopyMenu__Item.Copied .SpicyLyricsCopyMenu__Icon--Done {
+  display: flex;
+}
+
+.SpicyLyricsCopyMenu__Item.Copied {
+  color: var(--color-status-success);
+}
+
+.SpicyLyricsCopyMenu__Item.CopyFailed {
+  color: var(--color-status-danger);
+}
+
+.SpicyLyricsCopyMenu__Label {
+  flex: 1;
+}
+
+/* Once something was copied, the other entries step back. */
+.SpicyLyricsCopyMenu.Done .SpicyLyricsCopyMenu__Item:not(.Copied, .CopyFailed) {
+  opacity: 0.4;
+  pointer-events: none;
+}
